@@ -1,0 +1,21 @@
+{
+  "name": "obs_inv",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "timeline": "bun run src/scripts/getTimelineData.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.14"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "chokidar": "^5.0.0"
+  }
+}

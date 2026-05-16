@@ -1,0 +1,111 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --green: #7fff7f;
+  --green-dim: rgba(127, 255, 127, 0.55);
+  --green-faint: rgba(127, 255, 127, 0.08);
+  --green-border: rgba(127, 255, 127, 0.18);
+  --green-bg: rgba(10, 26, 10, 0.82);
+  --text: #d4f0d4;
+  --muted: rgba(180, 230, 180, 0.45);
+}
+
+body {
+  background: transparent;
+  color: var(--text);
+  font-family: "Cascadia Mono", ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  overflow: hidden;
+}
+
+.overlay {
+  display: grid;
+  gap: 4px;
+  padding: 7px;
+  width: fit-content;
+}
+
+.notice {
+  display: none;
+  background: var(--green-bg);
+  border: 1px solid rgba(255, 100, 100, 0.4);
+  color: #ff9999;
+  padding: 3px 6px;
+  font-size: 9px;
+}
+
+.notice.visible {
+  display: block;
+}
+
+.player-card {
+  width: 300px;
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  padding: 5px 7px 6px;
+}
+
+.inventory-row {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.player-name {
+  overflow: hidden;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+  min-width: 0;
+}
+
+.item-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+  line-height: 1.1;
+}
+
+.item-stat[data-zero="true"] {
+  opacity: 0.28;
+}
+
+.item-stat .label {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-stat .count {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.empty-state {
+  width: 300px;
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  color: var(--muted);
+  font-size: 9px;
+  padding: 8px 10px;
+  text-align: center;
+}
