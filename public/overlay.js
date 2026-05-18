@@ -26,8 +26,13 @@ function buildCraftableItems(rawItems) {
     { key: "anchors", label: "Anchors", count: anchors },
     { key: "beds", label: "Beds", count: beds },
     { key: "eyes", label: "Eyes", count: eyes },
+    { key: "obsidian", label: "Obsidian", count: count("obsidian") },
     { key: "pearls", label: "Pearls", count: count("ender_pearl") },
-    { key: "potions", label: "Potions", count: count("potion") },
+    {
+      key: "potions",
+      label: "Potions",
+      count: count("potion") + count("splash_potion"),
+    },
   ];
 }
 

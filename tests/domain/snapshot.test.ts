@@ -16,7 +16,7 @@ function makeMatch(): SpectateMatch {
     completes: [],
     inventories: {
       completed: {},
-      end: { beds: 1 },
+      end: { beds: 1, splash_potion: 2 },
       stronghold: { beds: 2 },
     },
     counts: [],
@@ -63,5 +63,6 @@ describe("buildSnapshot", () => {
       "end",
       "stronghold",
     ]);
+    expect(snapshot.players[1]?.items.splash_potion).toBe(2);
   });
 });

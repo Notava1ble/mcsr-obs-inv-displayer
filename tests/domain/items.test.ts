@@ -10,14 +10,17 @@ describe("buildCraftableItems", () => {
       blaze_rod: 2,
       ender_pearl: 5,
       potion: 1,
+      obsidian: 7,
+      splash_potion: 2,
     });
 
     expect(items).toEqual([
       { key: "anchors", label: "Anchors", count: 1 },
       { key: "beds", label: "Beds", count: 0 },
       { key: "eyes", label: "Eyes", count: 4 },
+      { key: "obsidian", label: "Obsidian", count: 7 },
       { key: "pearls", label: "Pearls", count: 5 },
-      { key: "potions", label: "Potions", count: 1 },
+      { key: "potions", label: "Potions", count: 3 },
     ]);
   });
 });

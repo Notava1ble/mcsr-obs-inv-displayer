@@ -33,6 +33,7 @@ export type TrackedItem =
   | "glowstone_dust"
   | "respawn_anchor"
   | "potion"
+  | "splash_potion"
   | "wools"
   | "glowstone"
   | "blaze_powder"
