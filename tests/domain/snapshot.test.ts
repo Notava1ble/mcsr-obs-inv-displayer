@@ -65,4 +65,18 @@ describe("buildSnapshot", () => {
     ]);
     expect(snapshot.players[1]?.items.splash_potion).toBe(2);
   });
+
+  test("fills missing nicknames and inventory counts with display-safe defaults", () => {
+    const match = makeMatch();
+    match.players = [{ uuid: "anonymous", roleType: 0 } as SpectateMatch["players"][number]];
+    match.inventories = {};
+    match.timelines = [];
+
+    const [player] = buildSnapshot(match, "initial", "input.txt").players;
+
+    expect(player?.nickname).toBe("Unknown");
+    expect(player?.avatarUrl).toBe("https://mc-heads.net/head/anonymous");
+    expect(player?.items.splash_potion).toBe(0);
+    expect(player?.items.piglinBarters).toBe(0);
+  });
 });

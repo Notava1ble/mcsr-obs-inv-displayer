@@ -23,6 +23,25 @@ describe("buildCraftableItems", () => {
       { key: "potions", label: "Potions", count: 3 },
     ]);
   });
+
+  test("treats missing and malformed inventory values as zero", () => {
+    const items = buildCraftableItems({
+      glowstone: Number.NaN,
+      glowstone_dust: "many",
+      crying_obsidian: undefined,
+      potion: 1,
+      splash_potion: Number.POSITIVE_INFINITY,
+    });
+
+    expect(items).toEqual([
+      { key: "anchors", label: "Anchors", count: 0 },
+      { key: "beds", label: "Beds", count: 0 },
+      { key: "eyes", label: "Eyes", count: 0 },
+      { key: "obsidian", label: "Obsidian", count: 0 },
+      { key: "pearls", label: "Pearls", count: 0 },
+      { key: "potions", label: "Potions", count: 1 },
+    ]);
+  });
 });
 
 describe("sumCraftableItems", () => {

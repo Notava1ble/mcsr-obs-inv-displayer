@@ -90,4 +90,31 @@ describe("buildPlayerTimelineSummary", () => {
       status: "active",
     });
   });
+
+  test("uses the fastest repeated split after the latest reset", () => {
+    const summary = buildPlayerTimelineSummary("reset", [
+      timeline("reset", "projectelo.timeline.reset", 1000),
+      timeline("reset", "story.enter_the_nether", 2500),
+      timeline("reset", "story.enter_the_nether", 2000),
+    ]);
+
+    expect(summary.entries).toEqual([
+      { type: "story.enter_the_nether", time: 2000 },
+    ]);
+    expect(summary.latestSplit).toEqual({
+      type: "story.enter_the_nether",
+      time: 2000,
+      rank: 2,
+    });
+  });
+
+  test("ignores terminal events before a reset", () => {
+    expect(
+      buildPlayerTimelineSummary("reset", [
+        timeline("reset", "projectelo.timeline.complete", 1000),
+        timeline("reset", "projectelo.timeline.reset", 1500),
+        timeline("reset", "story.smelt_iron", 2000),
+      ]).status,
+    ).toBe("active");
+  });
 });

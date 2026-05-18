@@ -24,16 +24,16 @@ export type CraftableItem = {
   count: number;
 };
 
-export type InventoryCounts = Partial<Record<TrackedItem | string, number>>;
+export type InventoryCounts = Partial<Record<TrackedItem | string, unknown>>;
 
-export function readItemCount(items: InventoryCounts, key: string): number {
-  return Number(items[key] ?? 0);
+function inventoryCount(items: InventoryCounts, key: string): number {
+  const count = Number(items[key] ?? 0);
+  return Number.isFinite(count) ? count : 0;
 }
 
 export function buildCraftableItems(items: InventoryCounts): CraftableItem[] {
-  const count = (key: string) => readItemCount(items, key);
-  const glowstone =
-    count("glowstone") + Math.floor(count("glowstone_dust") / 4);
+  const count = (key: string) => inventoryCount(items, key);
+  const glowstone = count("glowstone") + Math.floor(count("glowstone_dust") / 4);
   const anchors =
     count("respawn_anchor") +
     Math.min(

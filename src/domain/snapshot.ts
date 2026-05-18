@@ -7,10 +7,6 @@ import type {
   TrackedItem,
 } from "./types";
 
-function buildAvatarUrl(uuid: string) {
-  return `https://mc-heads.net/head/${uuid}`;
-}
-
 function buildPlayerSummary(
   player: SpectateMatch["players"][number],
   content: SpectateMatch,
@@ -23,7 +19,7 @@ function buildPlayerSummary(
   return {
     uuid: player.uuid,
     nickname: player.nickname ?? "Unknown",
-    avatarUrl: buildAvatarUrl(player.uuid),
+    avatarUrl: `https://mc-heads.net/head/${player.uuid}`,
     items,
     timeline: buildPlayerTimelineSummary(player.uuid, content.timelines),
   };

@@ -23,4 +23,24 @@ describe("getDashboardConfig", () => {
   test("shows five overlay players by default", () => {
     expect(getDashboardConfig({}).overlayPlayerLimit).toBe(5);
   });
+
+  test("falls back to defaults when numeric environment values are invalid", () => {
+    expect(
+      getDashboardConfig({
+        PORT: "not-a-port",
+        WS_PORT: "also-bad",
+        OVERLAY_PLAYER_LIMIT: "0",
+      }),
+    ).toEqual({
+      inputFile: "./input.txt",
+      overlayPlayerLimit: 5,
+      websocketPort: 4455,
+    });
+  });
+
+  test("uses WS_PORT when PORT is present but invalid", () => {
+    expect(getDashboardConfig({ PORT: "nope", WS_PORT: "5001" }).websocketPort).toBe(
+      5001,
+    );
+  });
 });

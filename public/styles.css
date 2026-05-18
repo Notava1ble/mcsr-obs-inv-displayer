@@ -43,7 +43,7 @@ body {
 }
 
 .player-card {
-  width: 300px;
+  width: 360px;
   background: var(--green-bg);
   border: 1px solid var(--green-border);
   padding: 5px 7px 6px;
@@ -67,10 +67,10 @@ body {
 }
 
 .item-grid {
-  display: grid;
+  display: flex;
   flex: 1;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 7px;
+  justify-content: space-between;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -101,7 +101,7 @@ body {
 }
 
 .empty-state {
-  width: 300px;
+  width: 360px;
   background: var(--green-bg);
   border: 1px solid var(--green-border);
   color: var(--muted);
