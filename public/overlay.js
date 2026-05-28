@@ -1,4 +1,4 @@
-const DEFAULT_URL = "ws://localhost:4455";
+const DEFAULT_URL = "ws://localhost:1234";
 const RECONNECT_DELAY = 2000;
 
 let websocket = null;
@@ -10,7 +10,8 @@ const alertBox = document.getElementById("alert");
 
 function buildCraftableItems(rawItems) {
   const count = (key) => Number(rawItems?.[key] ?? 0);
-  const glowstone = count("glowstone") + Math.floor(count("glowstone_dust") / 4);
+  const glowstone =
+    count("glowstone") + Math.floor(count("glowstone_dust") / 4);
   const anchors =
     count("respawn_anchor") +
     Math.min(
@@ -23,21 +24,50 @@ function buildCraftableItems(rawItems) {
   const eyes = count("ender_eye") + Math.min(powder, count("ender_pearl"));
 
   return [
-    { key: "anchors", label: "Anchors", count: anchors },
-    { key: "beds", label: "Beds", count: beds },
-    { key: "eyes", label: "Eyes", count: eyes },
-    { key: "obsidian", label: "Obsidian", count: count("obsidian") },
-    { key: "pearls", label: "Pearls", count: count("ender_pearl") },
+    {
+      key: "anchors",
+      label: "Anchors",
+      image: "./public/assets/anchor.png",
+      count: anchors,
+    },
+    {
+      key: "beds",
+      label: "Beds",
+      image: "./public/assets/bed.png",
+      count: beds,
+    },
+    {
+      key: "eyes",
+      label: "Eyes",
+      image: "./public/assets/eye.png",
+      count: eyes,
+    },
+    {
+      key: "obsidian",
+      label: "Obsidian",
+      image: "./public/assets/obsidian.png",
+      count: count("obsidian"),
+    },
+    {
+      key: "pearls",
+      label: "Pearls",
+      image: "./public/assets/pearls.png",
+      count: count("ender_pearl"),
+    },
     {
       key: "potions",
       label: "Potions",
+      image: "./public/assets/potion.png",
       count: count("potion") + count("splash_potion"),
     },
   ];
 }
 
 function sumCraftableItems(rawItems) {
-  return buildCraftableItems(rawItems).reduce((sum, item) => sum + item.count, 0);
+  return buildCraftableItems(rawItems).reduce(
+    (sum, item) => sum + item.count,
+    0,
+  );
 }
 
 function createElement(tagName, className, text) {
@@ -59,11 +89,13 @@ function clearPlayers() {
 
 function renderItem(item) {
   const stat = createElement("div", "item-stat");
+  const image = createElement("img", "item-image");
+  image.src = item.image;
+  image.alt = item.label;
+
   stat.dataset.zero = String(item.count === 0);
-  stat.append(
-    createElement("span", "label", item.label),
-    createElement("span", "count", String(item.count)),
-  );
+  stat.title = item.label;
+  stat.append(image, createElement("span", "count", String(item.count)));
 
   return stat;
 }
@@ -147,7 +179,7 @@ function connect() {
   }
 
   websocket.onopen = () => showAlert("");
-  websocket.onerror = () => showAlert("WebSocket error.");
+  websocket.onerror = () => {};
   websocket.onmessage = handleMessage;
   websocket.onclose = (event) => {
     if (event.target !== websocket) return;

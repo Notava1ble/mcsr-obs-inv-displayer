@@ -26,3 +26,10 @@ export function buildErrorSnapshot(
     file,
   };
 }
+
+export function isIgnorableSnapshotError(
+  error: unknown,
+  kind: DashboardSnapshot["kind"],
+): boolean {
+  return kind === "update" && error instanceof SyntaxError;
+}

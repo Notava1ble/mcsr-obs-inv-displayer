@@ -2,7 +2,11 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { buildErrorSnapshot, loadDashboardSnapshot } from "../../src/server/fileSnapshot";
+import {
+  buildErrorSnapshot,
+  isIgnorableSnapshotError,
+  loadDashboardSnapshot,
+} from "../../src/server/fileSnapshot";
 
 let tempDir: string | null = null;
 
@@ -56,5 +60,19 @@ describe("buildErrorSnapshot", () => {
       text: "Initial load failed: missing file",
       file: "input.txt",
     });
+  });
+});
+
+describe("isIgnorableSnapshotError", () => {
+  test("ignores update JSON parse failures", () => {
+    expect(isIgnorableSnapshotError(new SyntaxError("Unexpected end of JSON input"), "update")).toBe(true);
+  });
+
+  test("does not ignore initial JSON parse failures", () => {
+    expect(isIgnorableSnapshotError(new SyntaxError("Unexpected end of JSON input"), "initial")).toBe(false);
+  });
+
+  test("does not ignore non-parse update failures", () => {
+    expect(isIgnorableSnapshotError(new Error("missing file"), "update")).toBe(false);
   });
 });

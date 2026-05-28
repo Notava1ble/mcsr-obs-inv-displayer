@@ -1,7 +1,11 @@
 import type { ServerWebSocket } from "bun";
 import { broadcastToClients, type OutgoingMessage } from "./broadcast";
 import { getDashboardConfig, type DashboardConfig } from "./config";
-import { buildErrorSnapshot, loadDashboardSnapshot } from "./fileSnapshot";
+import {
+  buildErrorSnapshot,
+  isIgnorableSnapshotError,
+  loadDashboardSnapshot,
+} from "./fileSnapshot";
 import { watchFileChanges } from "./fileWatcher";
 import type { DashboardSnapshot } from "../domain/types";
 
@@ -26,6 +30,8 @@ export function startDashboardServer(options: DashboardServerOptions = {}) {
         ),
       );
     } catch (error) {
+      if (isIgnorableSnapshotError(error, kind)) return;
+
       const payload = buildErrorSnapshot(error, kind, config.inputFile);
       console.error(payload.text);
       broadcast(payload);

@@ -17,4 +17,20 @@ describe("overlay browser assets", () => {
     expect(html).not.toContain('id="player-count"');
     expect(html).not.toContain('id="total-items"');
   });
+
+  test("renders item images from the public assets folder", async () => {
+    const script = await Bun.file("public/overlay.js").text();
+
+    for (const image of [
+      "anchor.png",
+      "bed.png",
+      "eye.png",
+      "obsidian.png",
+      "pearls.png",
+      "potion.png",
+    ]) {
+      expect(script).toContain(`./public/assets/${image}`);
+      expect(await Bun.file(`public/assets/${image}`).exists()).toBe(true);
+    }
+  });
 });
