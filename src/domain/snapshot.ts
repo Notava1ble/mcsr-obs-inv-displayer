@@ -1,5 +1,5 @@
 import { buildPlayerTimelineSummary, rankPlayersByTimeline } from "./timeline";
-import { trackedItems } from "./items";
+import { buildCraftableItems, trackedItems } from "./items";
 import type {
   DashboardSnapshot,
   PlayerInventorySummary,
@@ -11,17 +11,19 @@ function buildPlayerSummary(
   player: SpectateMatch["players"][number],
   content: SpectateMatch,
 ): PlayerInventorySummary {
-  const inventory = content.inventories[player.uuid] ?? {};
+  const uuid = player.uuid;
+  const inventory = content.inventories[uuid] ?? {};
   const items = Object.fromEntries(
     trackedItems.map((item) => [item, inventory[item] ?? 0]),
   ) as Record<TrackedItem, number>;
 
   return {
-    uuid: player.uuid,
+    uuid,
     nickname: player.nickname ?? "Unknown",
-    avatarUrl: `https://mc-heads.net/head/${player.uuid}`,
+    avatarUrl: `https://mc-heads.net/avatar/${uuid}`,
     items,
-    timeline: buildPlayerTimelineSummary(player.uuid, content.timelines),
+    craftableItems: buildCraftableItems(items),
+    timeline: buildPlayerTimelineSummary(uuid, content.timelines),
   };
 }
 

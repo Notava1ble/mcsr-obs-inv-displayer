@@ -8,67 +8,16 @@ const playersElement = document.getElementById("players");
 const emptyState = document.getElementById("empty-state");
 const alertBox = document.getElementById("alert");
 
-function buildCraftableItems(rawItems) {
-  const count = (key) => Number(rawItems?.[key] ?? 0);
-  const glowstone =
-    count("glowstone") + Math.floor(count("glowstone_dust") / 4);
-  const anchors =
-    count("respawn_anchor") +
-    Math.min(
-      Math.floor(glowstone / 3),
-      Math.floor(count("crying_obsidian") / 6),
-    );
-  const wool = count("wools") + Math.floor(count("string") / 4);
-  const beds = count("beds") + Math.floor(wool / 3);
-  const powder = count("blaze_powder") + count("blaze_rod") * 2;
-  const eyes = count("ender_eye") + Math.min(powder, count("ender_pearl"));
+const previousCounts = new Map();
 
-  return [
-    {
-      key: "anchors",
-      label: "Anchors",
-      image: "./public/assets/anchor.png",
-      count: anchors,
-    },
-    {
-      key: "beds",
-      label: "Beds",
-      image: "./public/assets/bed.png",
-      count: beds,
-    },
-    {
-      key: "eyes",
-      label: "Eyes",
-      image: "./public/assets/eye.png",
-      count: eyes,
-    },
-    {
-      key: "obsidian",
-      label: "Obsidian",
-      image: "./public/assets/obsidian.png",
-      count: count("obsidian"),
-    },
-    {
-      key: "pearls",
-      label: "Pearls",
-      image: "./public/assets/pearls.png",
-      count: count("ender_pearl"),
-    },
-    {
-      key: "potions",
-      label: "Potions",
-      image: "./public/assets/potion.png",
-      count: count("potion") + count("splash_potion"),
-    },
-  ];
-}
-
-function sumCraftableItems(rawItems) {
-  return buildCraftableItems(rawItems).reduce(
-    (sum, item) => sum + item.count,
-    0,
-  );
-}
+const itemImages = {
+  anchors: "anchor",
+  beds: "bed",
+  eyes: "eye",
+  obsidian: "obsidian",
+  pearls: "pearls",
+  potions: "potion",
+};
 
 function createElement(tagName, className, text) {
   const element = document.createElement(tagName);
@@ -87,50 +36,151 @@ function clearPlayers() {
   playersElement.appendChild(emptyState);
 }
 
-function renderItem(item) {
-  const stat = createElement("div", "item-stat");
-  const image = createElement("img", "item-image");
-  image.src = item.image;
+function animateIncrease(element, key, value) {
+  const previousValue = previousCounts.get(key);
+  if (previousValue !== undefined && value > previousValue) {
+    element.classList.add("pulse-up");
+    element.addEventListener(
+      "animationend",
+      () => element.classList.remove("pulse-up"),
+      { once: true },
+    );
+  }
+  previousCounts.set(key, value);
+}
+
+function playerCraftableItems(player) {
+  if (Array.isArray(player.craftableItems)) return player.craftableItems;
+  throw new Error("Overlay and server are out of sync. Restart the Bun server.");
+}
+
+function renderItem(item, playerUuid, isChampMode) {
+  const classNames = isChampMode
+    ? { slot: "champ-item-slot", image: "champ-item-image", count: "champ-item-count" }
+    : { slot: "item-stat", image: "item-image", count: "count" };
+  const stat = createElement("div", classNames.slot);
+  const image = createElement("img", classNames.image);
+  image.src = `./public/assets/${itemImages[item.key]}.png`;
   image.alt = item.label;
 
   stat.dataset.zero = String(item.count === 0);
   stat.title = item.label;
-  stat.append(image, createElement("span", "count", String(item.count)));
+
+  const countSpan = createElement("span", classNames.count, String(item.count));
+  stat.append(image, countSpan);
+  animateIncrease(stat, `${playerUuid}_${item.key}`, item.count);
 
   return stat;
 }
 
-function renderPlayer(player) {
-  const craftableItems = buildCraftableItems(player.items);
+function renderPlayer(player, index, isChampMode) {
+  if (isChampMode) {
+    const card = createElement("div", `player-card champ player-${index + 1}`);
+
+    const identityRow = createElement("div", "champ-identity-row");
+
+    const avatarContainer = createElement("div", "champ-avatar-container");
+    const avatarImg = createElement("img", "champ-avatar");
+    avatarImg.src = player.avatarUrl;
+    avatarImg.alt = player.nickname;
+    avatarContainer.append(avatarImg);
+
+    const nameDiv = createElement("div", "champ-name", player.nickname);
+    identityRow.append(avatarContainer, nameDiv);
+
+    const itemGrid = createElement("div", "champ-item-grid");
+    itemGrid.append(...playerCraftableItems(player).map((item) => renderItem(item, player.uuid, true)));
+
+    card.append(identityRow, itemGrid);
+    return card;
+  }
+
   const card = createElement("div", "player-card");
   const playerName = createElement("div", "player-name", player.nickname);
-  const inventoryRow = createElement("div", "inventory-row");
   const itemGrid = createElement("div", "item-grid");
-
-  itemGrid.append(...craftableItems.map(renderItem));
-  inventoryRow.append(itemGrid);
-  card.append(playerName, inventoryRow);
-
+  itemGrid.append(...playerCraftableItems(player).map((item) => renderItem(item, player.uuid, false)));
+  card.append(playerName, itemGrid);
   return card;
+}
+
+function ratio(left, right) {
+  const total = left + right;
+  return total ? { left: (left / total) * 100, right: (right / total) * 100 } : { left: 50, right: 50 };
+}
+
+function renderMetric(label, leftPlayer, rightPlayer, itemKey) {
+  const leftValue = Number(leftPlayer.items[itemKey] ?? 0);
+  const rightValue = Number(rightPlayer.items[itemKey] ?? 0);
+  const row = createElement("div", "champ-metric-row");
+  const stats = createElement("div", "champ-metric-stats");
+  const left = createElement("div", "champ-metric-val left-val", String(leftValue));
+  const right = createElement("div", "champ-metric-val right-val", String(rightValue));
+
+  left.classList.toggle("leader", leftValue > rightValue);
+  right.classList.toggle("leader", rightValue > leftValue);
+  animateIncrease(left, `${leftPlayer.uuid}_${itemKey}`, leftValue);
+  animateIncrease(right, `${rightPlayer.uuid}_${itemKey}`, rightValue);
+  stats.append(left, createElement("div", "champ-metric-label", label), right);
+
+  const values = ratio(leftValue, rightValue);
+  const track = createElement("div", "champ-ratio-track");
+  const leftFill = createElement("div", "champ-ratio-fill-left");
+  const rightFill = createElement("div", "champ-ratio-fill-right");
+  leftFill.style.width = `${values.left}%`;
+  rightFill.style.width = `${values.right}%`;
+  track.append(leftFill, rightFill);
+
+  row.append(stats, track);
+  return row;
 }
 
 function renderSnapshot(payload) {
   showAlert("");
-  clearPlayers();
+
+  const overlayMain = document.querySelector(".overlay");
+  const isChampMode = Boolean(payload.champMode);
+  overlayMain.classList.toggle("champ-mode", isChampMode);
+
+  let champHeader = document.getElementById("champ-header");
+  if (isChampMode) {
+    if (!champHeader) {
+      champHeader = createElement("div", "champ-header");
+      champHeader.id = "champ-header";
+      overlayMain.insertBefore(champHeader, playersElement);
+    }
+  } else {
+    if (champHeader) {
+      champHeader.remove();
+    }
+  }
 
   const visiblePlayers = payload.overlayPlayers || payload.players;
 
   if (!visiblePlayers.length) {
+    clearPlayers();
+    if (champHeader) champHeader.innerHTML = "";
     emptyState.textContent = payload.players.length
       ? "No active split leaders."
       : "No players in snapshot.";
     return;
   }
 
+  const playersToRender = isChampMode ? visiblePlayers.slice(0, 2) : visiblePlayers;
+
   emptyState.remove();
-  visiblePlayers.forEach((player) => {
-    playersElement.appendChild(renderPlayer(player));
+  playersElement.innerHTML = "";
+  playersToRender.forEach((player, index) => {
+    playersElement.appendChild(renderPlayer(player, index, isChampMode));
   });
+
+  if (isChampMode && playersToRender.length) {
+    const [leftPlayer, rightPlayer = { uuid: "waiting", items: {} }] = playersToRender;
+    champHeader.innerHTML = "";
+    champHeader.append(
+      renderMetric("Gold Bartered", leftPlayer, rightPlayer, "piglinBarters"),
+      renderMetric("Blazes Killed", leftPlayer, rightPlayer, "blazeKills"),
+    );
+  }
 }
 
 function scheduleReconnect() {
@@ -154,8 +204,9 @@ function handleMessage(event) {
     if (payload.kind === "initial" || payload.kind === "update") {
       renderSnapshot(payload);
     }
-  } catch {
-    showAlert("Bad message from server.");
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Bad message from server.";
+    showAlert(message);
   }
 }
 

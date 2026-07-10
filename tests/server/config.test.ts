@@ -13,6 +13,7 @@ describe("getDashboardConfig", () => {
       inputFile: "match.json",
       overlayPlayerLimit: 3,
       websocketPort: 5000,
+      champMode: false,
     });
   });
 
@@ -35,7 +36,14 @@ describe("getDashboardConfig", () => {
       inputFile: "./input.txt",
       overlayPlayerLimit: 5,
       websocketPort: 4455,
+      champMode: false,
     });
+  });
+
+  test("parses CHAMP=1 as champMode true", () => {
+    expect(getDashboardConfig({ CHAMP: "1" }).champMode).toBe(true);
+    expect(getDashboardConfig({ CHAMP: "0" }).champMode).toBe(false);
+    expect(getDashboardConfig({}).champMode).toBe(false);
   });
 
   test("uses WS_PORT when PORT is present but invalid", () => {

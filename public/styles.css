@@ -48,12 +48,6 @@ body {
   padding: 6px 8px 7px;
 }
 
-.inventory-row {
-  display: flex;
-  align-items: center;
-  margin-top: 4px;
-}
-
 .player-name {
   overflow: hidden;
   color: var(--green);
@@ -70,6 +64,7 @@ body {
   flex: 1;
   justify-content: space-between;
   gap: 9px;
+  margin-top: 4px;
   min-width: 0;
 }
 
@@ -117,4 +112,269 @@ body {
   font-size: 9px;
   padding: 8px 10px;
   text-align: center;
+}
+
+/* Champ mode */
+.champ-mode {
+  --champ-bg: rgba(7, 13, 17, 0.88);
+  --champ-border: rgba(255, 255, 255, 0.08);
+  --champ-text: #e3eff2;
+  --champ-muted: rgba(160, 200, 215, 0.45);
+  --champ-slot-bg: rgba(20, 30, 40, 0.6);
+  --champ-slot-border: rgba(255, 255, 255, 0.06);
+
+  /* Left Player - Lime Green */
+  --p1-accent: #7fff7f;
+  --p1-bg: rgba(127, 255, 127, 0.04);
+  --p1-border: rgba(127, 255, 127, 0.22);
+  --p1-glow: rgba(127, 255, 127, 0.3);
+
+  /* Right Player - Teal Green */
+  --p2-accent: #3de8a0;
+  --p2-bg: rgba(61, 232, 160, 0.04);
+  --p2-border: rgba(61, 232, 160, 0.22);
+  --p2-glow: rgba(61, 232, 160, 0.3);
+
+  --font-title: "Cascadia Mono", ui-monospace, Consolas, monospace;
+}
+
+/* Container Width */
+.overlay.champ-mode {
+  width: 460px;
+  background: var(--champ-bg);
+  border: 1px solid var(--champ-border);
+  padding: 12px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  gap: 10px;
+}
+
+/* Champ Header Comparison Board */
+.champ-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(12, 22, 30, 0.6);
+  border: 1px solid var(--champ-border);
+  padding: 10px 12px;
+  margin-bottom: 4px;
+}
+
+.champ-metric-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.champ-metric-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.champ-metric-val {
+  font-family: var(--font-title);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition: all 0.3s ease;
+}
+
+.champ-metric-val.left-val {
+  color: var(--p1-accent);
+  text-shadow: 0 0 8px var(--p1-glow);
+}
+
+.champ-metric-val.right-val {
+  color: var(--p2-accent);
+  text-shadow: 0 0 8px var(--p2-glow);
+}
+
+.champ-metric-val.leader {
+  font-size: 21px;
+}
+
+.champ-metric-label {
+  font-family: var(--font-title);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--champ-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: center;
+  flex: 1;
+}
+
+/* Ratio Bar */
+.champ-ratio-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+}
+
+.champ-ratio-fill-left {
+  height: 100%;
+  background: var(--p1-accent);
+  box-shadow: 0 0 6px var(--p1-accent);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.champ-ratio-fill-right {
+  height: 100%;
+  background: var(--p2-accent);
+  box-shadow: 0 0 6px var(--p2-accent);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 1v1 Player Row Card */
+.champ-mode #players {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-card.champ {
+  width: 100%;
+  background: var(--player-bg);
+  border: 1px solid var(--player-border);
+  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.player-card.champ.player-1 {
+  --player-accent: var(--p1-accent);
+  --player-bg: var(--p1-bg);
+  --player-border: var(--p1-border);
+  --player-glow: var(--p1-glow);
+}
+
+.player-card.champ.player-2 {
+  --player-accent: var(--p2-accent);
+  --player-bg: var(--p2-bg);
+  --player-border: var(--p2-border);
+  --player-glow: var(--p2-glow);
+}
+
+.champ-identity-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Avatar Styling */
+.champ-avatar-container {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  overflow: hidden;
+}
+
+.champ-avatar {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/* Name Tag */
+.champ-name {
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-card.champ .champ-name {
+  color: var(--player-accent);
+  text-shadow: 0 0 4px var(--player-glow);
+}
+
+/* Item Grid and Slots */
+.champ-item-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.champ-item-slot {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  background: var(--champ-slot-bg);
+  border: 1px solid var(--champ-slot-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.player-card.champ .champ-item-slot {
+  border-color: var(--player-border);
+}
+
+.champ-item-slot[data-zero="true"] {
+  opacity: 0.22;
+}
+
+.champ-item-image {
+  width: 86%;
+  height: 86%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* Slot Count Badge */
+.champ-item-count {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  min-width: 14px;
+  padding: 1px 3px;
+  background: rgba(3, 8, 12, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--champ-text);
+  font-family: var(--font-title);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 1px 2px #000;
+}
+
+.player-card.champ .champ-item-count {
+  border-color: var(--player-border);
+}
+
+/* Animations for Live Increments */
+@keyframes pulse-increment {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    transform: scale(1.16);
+    box-shadow: 0 0 12px currentColor;
+    filter: brightness(1.6);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.pulse-up {
+  animation: pulse-increment 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    forwards;
 }

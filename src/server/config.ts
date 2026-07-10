@@ -2,6 +2,7 @@ export type DashboardConfig = {
   inputFile: string;
   overlayPlayerLimit: number;
   websocketPort: number;
+  champMode: boolean;
 };
 
 type DashboardEnv = Record<string, string | undefined>;
@@ -21,5 +22,6 @@ export function getDashboardConfig(env: DashboardEnv = process.env): DashboardCo
     inputFile: env.INPUT_FILE ?? "./input.txt",
     overlayPlayerLimit: positiveInteger(env.OVERLAY_PLAYER_LIMIT, 5),
     websocketPort,
+    champMode: env.CHAMP === "1",
   };
 }

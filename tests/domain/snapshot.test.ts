@@ -75,7 +75,15 @@ describe("buildSnapshot", () => {
     const [player] = buildSnapshot(match, "initial", "input.txt").players;
 
     expect(player?.nickname).toBe("Unknown");
-    expect(player?.avatarUrl).toBe("https://mc-heads.net/head/anonymous");
+    expect(player?.avatarUrl).toBe("https://mc-heads.net/avatar/anonymous");
+    expect(player?.craftableItems).toEqual([
+      { key: "anchors", label: "Anchors", count: 0 },
+      { key: "beds", label: "Beds", count: 0 },
+      { key: "eyes", label: "Eyes", count: 0 },
+      { key: "obsidian", label: "Obsidian", count: 0 },
+      { key: "pearls", label: "Pearls", count: 0 },
+      { key: "potions", label: "Potions", count: 0 },
+    ]);
     expect(player?.items.splash_potion).toBe(0);
     expect(player?.items.piglinBarters).toBe(0);
   });

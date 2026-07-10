@@ -18,19 +18,19 @@ describe("overlay browser assets", () => {
     expect(html).not.toContain('id="total-items"');
   });
 
-  test("renders item images from the public assets folder", async () => {
+  test("maps every displayed item to a public asset", async () => {
     const script = await Bun.file("public/overlay.js").text();
 
-    for (const image of [
-      "anchor.png",
-      "bed.png",
-      "eye.png",
-      "obsidian.png",
-      "pearls.png",
-      "potion.png",
+    for (const [key, image] of [
+      ["anchors", "anchor"],
+      ["beds", "bed"],
+      ["eyes", "eye"],
+      ["obsidian", "obsidian"],
+      ["pearls", "pearls"],
+      ["potions", "potion"],
     ]) {
-      expect(script).toContain(`./public/assets/${image}`);
-      expect(await Bun.file(`public/assets/${image}`).exists()).toBe(true);
+      expect(script).toContain(`${key}: "${image}"`);
+      expect(await Bun.file(`public/assets/${image}.png`).exists()).toBe(true);
     }
   });
 });

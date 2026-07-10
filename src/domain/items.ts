@@ -16,6 +16,7 @@ export const trackedItems = [
   "beds",
   "ender_pearl",
   "piglinBarters",
+  "blazeKills",
 ] as const satisfies readonly TrackedItem[];
 
 export type CraftableItem = {

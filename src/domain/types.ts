@@ -1,3 +1,4 @@
+import type { CraftableItem } from "./items";
 import type { PlayerTimelineSummary } from "./timeline";
 
 export interface SpectateMatch {
@@ -43,13 +44,15 @@ export type TrackedItem =
   | "blaze_rod"
   | "beds"
   | "ender_pearl"
-  | "piglinBarters";
+  | "piglinBarters"
+  | "blazeKills";
 
 export type PlayerInventorySummary = {
   uuid: string;
   nickname: string;
   avatarUrl: string;
   items: Record<TrackedItem, number>;
+  craftableItems: CraftableItem[];
   timeline: PlayerTimelineSummary;
 };
 
@@ -62,6 +65,7 @@ export type DashboardSnapshot = {
   startTime: number;
   players: PlayerInventorySummary[];
   overlayPlayers: PlayerInventorySummary[];
+  champMode?: boolean;
 };
 
 export type ErrorSnapshot = {

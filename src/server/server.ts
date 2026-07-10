@@ -22,13 +22,13 @@ export function startDashboardServer(options: DashboardServerOptions = {}) {
 
   const processFile = async (kind: DashboardSnapshot["kind"]) => {
     try {
-      broadcast(
-        await loadDashboardSnapshot(
-          config.inputFile,
-          kind,
-          config.overlayPlayerLimit,
-        ),
+      const snapshot = await loadDashboardSnapshot(
+        config.inputFile,
+        kind,
+        config.overlayPlayerLimit,
       );
+      snapshot.champMode = config.champMode;
+      broadcast(snapshot);
     } catch (error) {
       if (isIgnorableSnapshotError(error, kind)) return;
 
