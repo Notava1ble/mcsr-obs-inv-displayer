@@ -34,11 +34,13 @@ function inventoryCount(items: InventoryCounts, key: string): number {
 
 export function buildCraftableItems(items: InventoryCounts): CraftableItem[] {
   const count = (key: string) => inventoryCount(items, key);
-  const glowstone = count("glowstone") + Math.floor(count("glowstone_dust") / 4);
+  const glowstone =
+    count("glowstone") + Math.floor(count("glowstone_dust") / 4);
+  const crafted_anchors = count("respawn_anchor");
   const anchors =
-    count("respawn_anchor") +
+    crafted_anchors +
     Math.min(
-      Math.floor(glowstone / 3),
+      Math.floor((glowstone - crafted_anchors) / 4),
       Math.floor(count("crying_obsidian") / 6),
     );
   const wool = count("wools") + Math.floor(count("string") / 4);
@@ -61,5 +63,8 @@ export function buildCraftableItems(items: InventoryCounts): CraftableItem[] {
 }
 
 export function sumCraftableItems(items: InventoryCounts): number {
-  return buildCraftableItems(items).reduce((total, item) => total + item.count, 0);
+  return buildCraftableItems(items).reduce(
+    (total, item) => total + item.count,
+    0,
+  );
 }
